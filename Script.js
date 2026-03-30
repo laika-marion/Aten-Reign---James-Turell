@@ -1,10 +1,10 @@
 // 1. Fade de couleur automatique (ordre arc-en-ciel bref changez)
     const couleurs = [
-                        "#ECF9FE", // bleu
-                        "#E0F3FF",
-                        "#D7EDFF",
-                        "#B2D0FF",
-                        "#A9C1FF",
+                        "#7fb3c8", // bleu
+                        "#215b7e",
+                        "#062947",
+                        "#260531",
+                        "#481a80",
                         "#C7B2FF", // violet
                         "#EBC4FF",
                         "#FFD2FF",
