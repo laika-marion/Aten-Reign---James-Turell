@@ -25,11 +25,11 @@
     // 2. Les SVG
 
    const ellipses = [
-  `<img src="ellipse1.svg" alt="Ellipse 1"/>`,
-  `<img src="ellipse2.svg" alt="Ellipse 2"/>`,
-  `<img src="ellipse3.svg" alt="Ellipse 3"/>`,
-  `<img src="ellipse4.svg" alt="Ellipse 4"/>`,
-  `<img src="ellipse5.svg" alt="Ellipse 5"/>`,
+  `<img src="img/ellipse1.svg" alt="Ellipse 1"/>`,
+  `<img src="img/ellipse2.svg" alt="Ellipse 2"/>`,
+  `<img src="img/ellipse3.svg" alt="Ellipse 3"/>`,
+  `<img src="img/ellipse4.svg" alt="Ellipse 4"/>`,
+  `<img src="img/ellipse5.svg" alt="Ellipse 5"/>`,
 ];
 
     let etat = 0; // 0 = aucun cercle, 1 à 5 = index du dernier cercle affiché
