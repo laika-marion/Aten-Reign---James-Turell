@@ -1,60 +1,113 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .hide-all > *:not(.ellipse) {
+  display: none;
 }
 
-body {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: #ecf9fe;
-  /* La transition CSS gère le fade entre chaque couleur */
-  transition: background-color 2s ease;
-  cursor: crosshair;
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #ECF9FE;
+      /* La transition CSS gère le fade entre chaque couleur */
+      transition: background-color 2s ease;
+      cursor: crosshair;
+    }
+
+   .container {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: lighter;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.67);
+      height: 100vh;
+    }
+
+    img{
+      margin: 10px;
+      
+    }
+
+    .fleches{
+      /*background-color: blueviolet;*/
+      display: flex;
+      
+    }
+
+    .fleches img {
+       width: 80px;   /* largeur */
+      height: auto;  /* conserve les proportions */
+      margin: 10px;
+      color:white;
+    }
+
+  #hint {
+      /*background-color: rgb(2, 43, 109);*/
+      color: rgba(255,255,255,0.67);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      pointer-events: none;
+      user-select: none;
+      display: flex;
+      position: absolute;
+      bottom: 2rem;
+      width: 90%;
+      text-align: left;
+      align-items: center;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      
 }
 
-#hint {
-  color: rgba(255, 255, 255, 0.706);
-  font-family: "Helvetica", sans-serif;
-  font-size: 0.9rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  pointer-events: none;
-  user-select: none;
-  position: absolute;
-  bottom: 2rem;
-  width: 100%;
-  text-align: center;
-}
+    .titre{
+      /*background-color: rgba(127, 255, 212, 0.466);*/
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+  
+    }
 
-/* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
-.ellipse {
-  position: fixed;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  animation: pop 0.5s ease-out forwards;
-  opacity: 0;
-}
+    .aten{
+      font-size: 30px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-/* Le SVG est positionné à l'intérieur via des variables CSS */
-.ellipse img {
-  position: absolute;
-  width: var(--taille);
-  /* utilise la variable */
-  height: var(--taille);
-  left: var(--cx);
-  top: var(--cy);
-  transform: translate(-50%, -50%);
-}
+    .artiste{
+      font-size:15px;
+    }
 
-@keyframes pop {
-  from {
-    opacity: 0;
-  }
+    #text{
+      font-size: 30px;
+    }
 
-  to {
-    opacity: 1;
-  }
-}
+    /* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
+    .ellipse {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      animation: pop 0.5s ease-out forwards;
+      opacity: 0;
+    }
+
+    /* Le SVG est positionné à l'intérieur via des variables CSS */
+    .ellipse img {
+        position: absolute;
+        width: var(--taille);   /* utilise la variable */
+        height: var(--taille);
+        left: var(--cx);
+        top: var(--cy);
+        transform: translate(-50%, -50%);
+    }
+
+    @keyframes pop {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
