@@ -1,113 +1,106 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Helvetica, sans-serif;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
 
-    .hide-all > *:not(.ellipse) {
+.hide-all > *:not(.ellipse) {
   display: none;
 }
 
-    body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #ECF9FE;
-      /* La transition CSS gère le fade entre chaque couleur */
-      transition: background-color 2s ease;
-      cursor: crosshair;
-    }
-
-   .container {
-      font-family: Arial, Helvetica, sans-serif;
-      font-weight: lighter;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: rgba(255, 255, 255, 0.67);
-      height: 100vh;
-    }
-
-    img{
-      margin: 10px;
-      
-    }
-
-    .fleches{
-      /*background-color: blueviolet;*/
-      display: flex;
-      
-    }
-
-    .fleches img {
-       width: 80px;   /* largeur */
-      height: auto;  /* conserve les proportions */
-      margin: 10px;
-      color:white;
-    }
-
-  #hint {
-      /*background-color: rgb(2, 43, 109);*/
-      color: rgba(255,255,255,0.67);
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 0.9rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      pointer-events: none;
-      user-select: none;
-      display: flex;
-      position: absolute;
-      bottom: 2rem;
-      width: 90%;
-      text-align: left;
-      align-items: center;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 20px;
-      
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #000000;
+  /* La transition CSS gère le fade entre chaque couleur */
+  transition: background-color 2s ease;
+  cursor: crosshair;
 }
 
-    .titre{
-      /*background-color: rgba(127, 255, 212, 0.466);*/
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-  
-    }
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 20rem;
+}
 
-    .aten{
-      font-size: 30px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+.container h1 {
+  font-size: 1rem;
+  font-weight: 100;
+}
 
-    .artiste{
-      font-size:15px;
-    }
+section {
+  display: grid;
+  gap: 20rem;
+}
 
-    #text{
-      font-size: 30px;
-    }
+img {
+  margin: 10px;
+}
 
-    /* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
-    .ellipse {
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      animation: pop 0.5s ease-out forwards;
-      opacity: 0;
-    }
+.fleches {
+  /*background-color: blueviolet;*/
+  display: flex;
+}
 
-    /* Le SVG est positionné à l'intérieur via des variables CSS */
-    .ellipse img {
-        position: absolute;
-        width: var(--taille);   /* utilise la variable */
-        height: var(--taille);
-        left: var(--cx);
-        top: var(--cy);
-        transform: translate(-50%, -50%);
-    }
+.fleches img {
+  width: 80px; /* largeur */
+  height: auto; /* conserve les proportions */
+  margin: 10px;
+}
 
-    @keyframes pop {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+#hint {
+  user-select: none;
+  display: flex;
+  max-width: 90vw;
+  margin: auto;
+  align-items: center;
+  font-size: 1.2rem;
+  gap: 3rem;
+}
+
+.aten {
+  font-size: 1.875rem;
+}
+
+.consigne {
+  font-size: 1rem;
+  width: 520px;
+}
+
+/* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
+.ellipse {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  animation: pop 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* Le SVG est positionné à l'intérieur via des variables CSS */
+.ellipse img {
+  position: absolute;
+  width: var(--taille); /* utilise la variable */
+  height: var(--taille);
+  left: var(--cx);
+  top: var(--cy);
+  transform: translate(-50%, -50%);
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
