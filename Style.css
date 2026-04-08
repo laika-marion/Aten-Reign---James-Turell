@@ -1,52 +1,60 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background-color: #ECF9FE;
-      /* La transition CSS gère le fade entre chaque couleur */
-      transition: background-color 2s ease;
-      cursor: crosshair;
-    }
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #ecf9fe;
+  /* La transition CSS gère le fade entre chaque couleur */
+  transition: background-color 2s ease;
+  cursor: crosshair;
+}
 
-    #hint {
-      color: rgba(255,255,255,0.55);
-      font-family: 'Courier New', monospace;
-      font-size: 0.9rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      pointer-events: none;
-      user-select: none;
-      position: absolute;
-      bottom: 2rem;
-      width: 100%;
-      text-align: center;
-    }
+#hint {
+  color: rgba(255, 255, 255, 0.706);
+  font-family: "Helvetica", sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  bottom: 2rem;
+  width: 100%;
+  text-align: center;
+}
 
-    /* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
-    .ellipse {
-      position: fixed;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      animation: pop 0.5s ease-out forwards;
-      opacity: 0;
-    }
+/* La div prend toute la fenêtre : la lueur du SVG n'est plus coupée */
+.ellipse {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  animation: pop 0.5s ease-out forwards;
+  opacity: 0;
+}
 
-    /* Le SVG est positionné à l'intérieur via des variables CSS */
-    .ellipse img {
-        position: absolute;
-        width: var(--taille);   /* utilise la variable */
-        height: var(--taille);
-        left: var(--cx);
-        top: var(--cy);
-        transform: translate(-50%, -50%);
-    }
+/* Le SVG est positionné à l'intérieur via des variables CSS */
+.ellipse img {
+  position: absolute;
+  width: var(--taille);
+  /* utilise la variable */
+  height: var(--taille);
+  left: var(--cx);
+  top: var(--cy);
+  transform: translate(-50%, -50%);
+}
 
-    @keyframes pop {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+@keyframes pop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
