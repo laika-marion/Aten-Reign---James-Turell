@@ -38,7 +38,7 @@ let indexCouleur = 0;
 // modifiable avec les flèches gauche/droite du clavier
 let vitesseCouleur = 3000;
 
-// 0 = aucun cercle affiché, 1 à 5 ellipses affichées
+// 0 = aucun cercle affiché
 let etat = 0;
 
 // mémorise le centre et le rayon du premier cercle cliqué (cx,cy) ou null si aucun cercle présent
@@ -54,7 +54,7 @@ function creerEllipse(svgTemplate, cx, cy, taille) {
   conteneur.style.setProperty("--cy", cy + "px");
   conteneur.style.setProperty("--taille", taille);
   conteneur.innerHTML = svgTemplate;
-  // utilise prepend pour que les nouveaux cercles s'ajoutent EN DESSOUS des précédents visuellement
+  // utilise prepend au lieu d'append pour que les nouveaux cercles s'ajoutent EN DESSOUS des précédents visuellement
   document.body.prepend(conteneur);
   return conteneur;
 }
@@ -68,16 +68,10 @@ function toutSupprimer() {
 // est-ce que mon nouveau clic est tombé À L'INTÉRIEUR du cercle ou À L'EXTÉRIEUR ?"
 function estDansCercle1(x, y) {
   if (cercle1 == null) return false;
-
-  // dx = écart horizontal entre le nouveau clic (x) et le centre du cercle mémorisé lors du 1er clic (cercle1.cx)
   let dx = x - cercle1.cx;
-
-  // dy = écart vertical entre le nouveau clic (y) et le centre du cercle mémorisé lors du 1er clic (cercle1.cy)
   let dy = y - cercle1.cy;
-
-  // Théorème de Pythagore : on calcule la distance réelle en pixels
-  // entre le nouveau clic et le centre du cercle
-  // Si cette distance est inférieure ou égale au rayon (cercle1.r)
+  // Théorème de Pythagore : on calcule la distance réelle en pixels entre le nouveau clic et le centre du cercle
+  // si cette distance est inférieure ou égale au rayon (cercle1.r)
   // -> le clic est À L'INTÉRIEUR le cercle donc on répond true
   // Sinon le clic est À L'EXTÉRIEUR donc on répond false
   return Math.sqrt(dx * dx + dy * dy) <= cercle1.r;
@@ -111,8 +105,6 @@ window.addEventListener("load", function () {
 
 // 4. EVENTS  -------------------------------------------------------------------------------------------
 
-// écoute les touches du clavier pour accélérer ou ralentir
-// le changement de couleur avec les flèches gauche/droite
 document.addEventListener(
   "keydown",
   function (event) {
@@ -135,10 +127,7 @@ document.addEventListener(
   true,
 );
 
-// gère toute la logique des clics selon l'état courant :
-// - etat 0 : aucun cercle -> crée ellipse 1 au point de clic
-// - clic dedans (+ c'est pas au max) -> ajoute le cercle suivant (même centre)
-// - clic dehors ou max atteint -> repart depuis ellipse 1
+// gère toute la logique des clics selon l'état des cercles de l'expérience
 document.addEventListener("click", function (event) {
   cacherToutSaufEllipses();
 
@@ -154,7 +143,7 @@ document.addEventListener("click", function (event) {
     cercle1 = { cx: x, cy: y, r: r };
     etat = 1;
   } else if (estDansCercle1(x, y) && etat < ellipses.length) {
-    // clic DEDANS -> son intérieur
+    // clic DEDANS -> son intérieur + autre ellipse(s) jusqu'à la 5ème
     jouerSon(sonInterieur);
     creerEllipse(ellipses[etat], cercle1.cx, cercle1.cy, tailles[etat]);
     etat++;
