@@ -25,18 +25,24 @@ const ellipses = [
 const tailles = ["200vmin", "80vmin", "100vmin", "120vmin", "140vmin"];
 
 // sons de l'expérience
-const sonAmbiance = new Audio("sound/ambiance.mp3"); // démarre au 1er clic
+const sonAmbiance = new Audio("sound/ambiance.mp3");
 sonAmbiance.loop = true;
 
-const sonInterieur = new Audio("sound/interieur.mp3"); // clic dans le cercle
-
-const sonExterieur = new Audio("sound/exterieur.mp3"); // clic hors du cercle
+const sonInterieur  = new Audio("sound/interieur.mp3");
+const sonExterieur  = new Audio("sound/an.mp3");
+const sonLongClic   = new Audio("sound/ad.mp3");  // déclenché dès qu'un long clic est détecté
+const sonDisparition = new Audio("sound/d.mp3");  // déclenché quand les cercles disparaissent
 
 // index de la couleur actuellement affichée dans le tableau couleurs
 let indexCouleur = 0;
 
-// modifiable avec les flèches gauche/droite du clavier
 let vitesseCouleur = 3000;
+
+// opacité des ellipses, modifiable avec les flèches gauche/droite (entre 0 et 1)
+const OPACITE_MIN = 0.05;
+const OPACITE_MAX = 1;
+const OPACITE_PAS = 0.05;
+let opaciteEllipses = 1; // valeur initiale = fin naturelle de l'animation pop
 
 // 0 = aucun cercle affiché
 let etat = 0;
@@ -44,9 +50,18 @@ let etat = 0;
 // mémorise le centre et le rayon du premier cercle cliqué (cx,cy) ou null si aucun cercle présent
 let cercle1 = null;
 
+// 5. VARIABLES CLIC LONG / ROTATION -------------------------------------------------------------------
+
+const SEUIL_LONG_CLIC = 200;    // ms : en dessous = clic court, au-dessus = clic long
+const CONTRAINTE_ROTATION = 15; // plus la valeur est grande, plus la rotation est douce
+
+let longClickTimer = null;
+let isLongClick = false;        // true dès que le seuil est dépassé
+let isMoving = false;           // true pendant le drag du clic long
+let bloquerProchainClic = false; // empêche le "click" natif qui suit un mouseup long
+
 // 2. FONCTIONS DE BASE -------------------------------------------------------------------------------
 
-// crée et insère une ellipse à la position (cx,cy) avec la taille donnée
 function creerEllipse(svgTemplate, cx, cy, taille) {
   let conteneur = document.createElement("div");
   conteneur.className = "ellipse";
@@ -54,26 +69,31 @@ function creerEllipse(svgTemplate, cx, cy, taille) {
   conteneur.style.setProperty("--cy", cy + "px");
   conteneur.style.setProperty("--taille", taille);
   conteneur.innerHTML = svgTemplate;
-  // utilise prepend au lieu d'append pour que les nouveaux cercles s'ajoutent EN DESSOUS des précédents visuellement
   document.body.prepend(conteneur);
+
+  // une fois l'animation terminée, on retire "forwards" et on fixe l'opacité courante
+  conteneur.addEventListener("animationend", () => {
+    conteneur.classList.add("animee");
+    conteneur.style.opacity = opaciteEllipses;
+  }, { once: true });
+
   return conteneur;
 }
 
 function toutSupprimer() {
-  document.querySelectorAll(".ellipse").forEach(function (el) {
+  let ellipsesPresentes = document.querySelectorAll(".ellipse");
+  if (ellipsesPresentes.length > 0) {
+    jouerSon(sonDisparition); // son D déclenché à chaque fois que des cercles disparaissent
+  }
+  ellipsesPresentes.forEach(function (el) {
     document.body.removeChild(el);
   });
 }
 
-// est-ce que mon nouveau clic est tombé À L'INTÉRIEUR du cercle ou À L'EXTÉRIEUR ?"
 function estDansCercle1(x, y) {
   if (cercle1 == null) return false;
   let dx = x - cercle1.cx;
   let dy = y - cercle1.cy;
-  // Théorème de Pythagore : on calcule la distance réelle en pixels entre le nouveau clic et le centre du cercle
-  // si cette distance est inférieure ou égale au rayon (cercle1.r)
-  // -> le clic est À L'INTÉRIEUR le cercle donc on répond true
-  // Sinon le clic est À L'EXTÉRIEUR donc on répond false
   return Math.sqrt(dx * dx + dy * dy) <= cercle1.r;
 }
 
@@ -97,6 +117,26 @@ function jouerSon(son) {
   son.play();
 }
 
+// remet toutes les ellipses à plat avec une transition douce
+function reinitialiserRotation() {
+  document.querySelectorAll(".ellipse").forEach((el) => {
+    el.style.transition = "transform 0.4s ease";
+    el.style.transform = "rotateX(0deg) rotateY(0deg)";
+    setTimeout(() => { el.style.transition = ""; }, 400);
+  });
+}
+
+// applique opaciteEllipses à toutes les ellipses présentes et joue le son D aux limites
+function appliquerOpacite() {
+  let atteintLimite = opaciteEllipses <= OPACITE_MIN || opaciteEllipses >= OPACITE_MAX;
+  document.querySelectorAll(".ellipse.animee").forEach((el) => {
+    el.style.opacity = opaciteEllipses;
+  });
+  if (atteintLimite) {
+    jouerSon(sonDisparition);
+  }
+}
+
 // 3. INITIALISATION ------------------------------------------------------------------------------------
 window.addEventListener("load", function () {
   console.log("La page est complètement chargée");
@@ -113,29 +153,75 @@ document.addEventListener(
 
     switch (event.code) {
       case "ArrowLeft":
-        // flèche gauche : accélère
-        vitesseCouleur -= 100;
+        opaciteEllipses = Math.max(OPACITE_MIN, parseFloat((opaciteEllipses - OPACITE_PAS).toFixed(2)));
+        appliquerOpacite();
         break;
       case "ArrowRight":
-        // flèche droite : ralentit
-        vitesseCouleur += 100;
+        opaciteEllipses = Math.min(OPACITE_MAX, parseFloat((opaciteEllipses + OPACITE_PAS).toFixed(2)));
+        appliquerOpacite();
         break;
     }
-    console.log(vitesseCouleur);
+    console.log("opacité ellipses :", opaciteEllipses);
     event.preventDefault();
   },
   true,
 );
 
-// gère toute la logique des clics selon l'état des cercles de l'expérience
+// --- CLIC LONG : détection au mousedown ---
+document.addEventListener("mousedown", function () {
+  isLongClick = false;
+
+  longClickTimer = setTimeout(() => {
+    isLongClick = true;
+    isMoving = true;
+    jouerSon(sonLongClic); // son AD joué dès que le seuil du long clic est atteint
+  }, SEUIL_LONG_CLIC);
+});
+
+// --- CLIC LONG : rotation au mousemove ---
+document.addEventListener("mousemove", function (event) {
+  if (!isMoving || !cercle1) return;
+
+  let dx = event.clientX - cercle1.cx;
+  let dy = event.clientY - cercle1.cy;
+  let calcX = -dy / CONTRAINTE_ROTATION;
+  let calcY =  dx / CONTRAINTE_ROTATION;
+
+  // applique la rotation sur TOUTES les ellipses
+  document.querySelectorAll(".ellipse").forEach((el) => {
+    el.style.transform = "rotateX(" + calcX + "deg) rotateY(" + calcY + "deg)";
+  });
+});
+
+// --- CLIC LONG : fin au mouseup ---
+window.addEventListener("mouseup", function () {
+  clearTimeout(longClickTimer);
+
+  if (isLongClick) {
+    isMoving = false;
+    isLongClick = false;
+    reinitialiserRotation();
+    // bloque le "click" natif qui se déclenche automatiquement après le mouseup
+    bloquerProchainClic = true;
+  }
+
+  isMoving = false;
+});
+
+// --- CLIC COURT : logique des ellipses ---
 document.addEventListener("click", function (event) {
+  // si le mouseup vient de signaler un clic long, on ignore ce "click"
+  if (bloquerProchainClic) {
+    bloquerProchainClic = false;
+    return;
+  }
+
   cacherToutSaufEllipses();
 
   let x = event.clientX;
   let y = event.clientY;
 
   if (etat == 0) {
-    // aucun cercle -> affiche ellipse 1 + son extérieur
     jouerSon(sonExterieur);
     toutSupprimer();
     creerEllipse(ellipses[0], x, y, tailles[0]);
@@ -143,12 +229,10 @@ document.addEventListener("click", function (event) {
     cercle1 = { cx: x, cy: y, r: r };
     etat = 1;
   } else if (estDansCercle1(x, y) && etat < ellipses.length) {
-    // clic DEDANS -> son intérieur + autre ellipse(s) jusqu'à la 5ème
     jouerSon(sonInterieur);
     creerEllipse(ellipses[etat], cercle1.cx, cercle1.cy, tailles[etat]);
     etat++;
   } else {
-    // clic DEHORS -> son extérieur
     jouerSon(sonExterieur);
     toutSupprimer();
     creerEllipse(ellipses[0], x, y, tailles[0]);

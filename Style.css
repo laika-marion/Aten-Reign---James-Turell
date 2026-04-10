@@ -83,6 +83,10 @@ img {
   opacity: 0;
 }
 
+.ellipse.animee {
+  animation: none;
+}
+
 /* Le SVG est positionné à l'intérieur via des variables CSS */
 .ellipse img {
   position: absolute;
@@ -98,6 +102,6 @@ img {
     opacity: 0;
   }
   to {
-    opacity: 0.5;
+    opacity: 1;
   }
 }
