@@ -28,10 +28,10 @@ const tailles = ["200vmin", "80vmin", "100vmin", "120vmin", "140vmin"];
 const sonAmbiance = new Audio("sound/ambiance.mp3");
 sonAmbiance.loop = true;
 
-const sonInterieur  = new Audio("sound/interieur.mp3");
-const sonExterieur  = new Audio("sound/an.mp3");
-const sonLongClic   = new Audio("sound/ad.mp3");  // déclenché dès qu'un long clic est détecté
-const sonDisparition = new Audio("sound/d.mp3");  // déclenché quand les cercles disparaissent
+const sonInterieur = new Audio("sound/interieur.mp3");
+const sonExterieur = new Audio("sound/an.mp3");
+const sonLongClic = new Audio("sound/ad.mp3"); // déclenché dès qu'un long clic est détecté
+const sonDisparition = new Audio("sound/d.mp3"); // déclenché quand les cercles disparaissent
 
 // index de la couleur actuellement affichée dans le tableau couleurs
 let indexCouleur = 0;
@@ -40,9 +40,9 @@ let vitesseCouleur = 3000;
 
 // opacité des ellipses, modifiable avec les flèches gauche/droite (entre 0 et 1)
 const OPACITE_MIN = 0.05;
-const OPACITE_MAX = 1;
+const OPACITE_MAX = 0.8;
 const OPACITE_PAS = 0.05;
-let opaciteEllipses = 1; // valeur initiale = fin naturelle de l'animation pop
+let opaciteEllipses = 0.5; // valeur initiale = fin naturelle de l'animation pop
 
 // 0 = aucun cercle affiché
 let etat = 0;
@@ -52,12 +52,12 @@ let cercle1 = null;
 
 // 5. VARIABLES CLIC LONG / ROTATION -------------------------------------------------------------------
 
-const SEUIL_LONG_CLIC = 200;    // ms : en dessous = clic court, au-dessus = clic long
+const SEUIL_LONG_CLIC = 200; // ms : en dessous = clic court, au-dessus = clic long
 const CONTRAINTE_ROTATION = 15; // plus la valeur est grande, plus la rotation est douce
 
 let longClickTimer = null;
-let isLongClick = false;        // true dès que le seuil est dépassé
-let isMoving = false;           // true pendant le drag du clic long
+let isLongClick = false; // true dès que le seuil est dépassé
+let isMoving = false; // true pendant le drag du clic long
 let bloquerProchainClic = false; // empêche le "click" natif qui suit un mouseup long
 
 // 2. FONCTIONS DE BASE -------------------------------------------------------------------------------
@@ -72,10 +72,14 @@ function creerEllipse(svgTemplate, cx, cy, taille) {
   document.body.prepend(conteneur);
 
   // une fois l'animation terminée, on retire "forwards" et on fixe l'opacité courante
-  conteneur.addEventListener("animationend", () => {
-    conteneur.classList.add("animee");
-    conteneur.style.opacity = opaciteEllipses;
-  }, { once: true });
+  conteneur.addEventListener(
+    "animationend",
+    () => {
+      conteneur.classList.add("animee");
+      conteneur.style.opacity = opaciteEllipses;
+    },
+    { once: true },
+  );
 
   return conteneur;
 }
@@ -122,13 +126,16 @@ function reinitialiserRotation() {
   document.querySelectorAll(".ellipse").forEach((el) => {
     el.style.transition = "transform 0.4s ease";
     el.style.transform = "rotateX(0deg) rotateY(0deg)";
-    setTimeout(() => { el.style.transition = ""; }, 400);
+    setTimeout(() => {
+      el.style.transition = "";
+    }, 400);
   });
 }
 
 // applique opaciteEllipses à toutes les ellipses présentes et joue le son D aux limites
 function appliquerOpacite() {
-  let atteintLimite = opaciteEllipses <= OPACITE_MIN || opaciteEllipses >= OPACITE_MAX;
+  let atteintLimite =
+    opaciteEllipses <= OPACITE_MIN || opaciteEllipses >= OPACITE_MAX;
   document.querySelectorAll(".ellipse.animee").forEach((el) => {
     el.style.opacity = opaciteEllipses;
   });
@@ -143,7 +150,7 @@ window.addEventListener("load", function () {
   setInterval(changerCouleur, vitesseCouleur);
 });
 
-// 4. EVENTS  -------------------------------------------------------------------------------------------
+// 4. EVENTS  -------------------------------------------------------- -----------------------------------
 
 document.addEventListener(
   "keydown",
@@ -153,11 +160,17 @@ document.addEventListener(
 
     switch (event.code) {
       case "ArrowLeft":
-        opaciteEllipses = Math.max(OPACITE_MIN, parseFloat((opaciteEllipses - OPACITE_PAS).toFixed(2)));
+        opaciteEllipses = Math.max(
+          OPACITE_MIN,
+          parseFloat((opaciteEllipses - OPACITE_PAS).toFixed(2)),
+        );
         appliquerOpacite();
         break;
       case "ArrowRight":
-        opaciteEllipses = Math.min(OPACITE_MAX, parseFloat((opaciteEllipses + OPACITE_PAS).toFixed(2)));
+        opaciteEllipses = Math.min(
+          OPACITE_MAX,
+          parseFloat((opaciteEllipses + OPACITE_PAS).toFixed(2)),
+        );
         appliquerOpacite();
         break;
     }
@@ -185,7 +198,7 @@ document.addEventListener("mousemove", function (event) {
   let dx = event.clientX - cercle1.cx;
   let dy = event.clientY - cercle1.cy;
   let calcX = -dy / CONTRAINTE_ROTATION;
-  let calcY =  dx / CONTRAINTE_ROTATION;
+  let calcY = dx / CONTRAINTE_ROTATION;
 
   // applique la rotation sur TOUTES les ellipses
   document.querySelectorAll(".ellipse").forEach((el) => {
